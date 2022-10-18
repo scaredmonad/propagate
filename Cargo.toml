@@ -2,5 +2,6 @@
 name = "propagate"
 version = "0.1.0"
 edition = "2021"
+author = "Abdullahi Ali Mohamud <voidptr9@gmail.com>"
 
 [dependencies]

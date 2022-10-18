@@ -104,7 +104,7 @@ mod tests {
         use std::rc::Rc;
         use std::borrow::Borrow;
         use std::cell::{RefCell, Ref, RefMut};
-        static counter: Rc<RefCell<Counter>> = Rc::new(RefCell::new(Counter { count: 0 }));
+        let mut counter: Rc<RefCell<Counter>> = Rc::new(RefCell::new(Counter { count: 0 }));
         let mut event: Event<Status, ()> = Event::new();
         event.on(Status::Active, box(move |_| {
             let counter: &mut RefMut<Counter> = &mut counter.borrow_mut();
