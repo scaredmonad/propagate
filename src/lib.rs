@@ -88,13 +88,30 @@ mod tests {
     }
     #[test]
     fn dispatch_with_mut_data() {
-        let counter = Counter { count: 0 };
-        let mut event: Event<Status, Counter> = Event::new();
-        event.on(Status::Active, box(move |mut counter| {
+        let mut counter = Counter { count: 0 };
+        let mut event: Event<Status, ()> = Event::new();
+        event.on(Status::Active, box(move |_| {
             counter.count += 1;
-            assert_eq!(counter.count, 1);
         }));
-        event.dispatch(Status::Active, counter);
+        event.on(Status::Active, box(move |_| {
+            counter.count += 1;
+        }));
+        event.dispatch(Status::Active, ());
+        assert_eq!(counter.count, 2);
+    }
+    // #[test]
+    fn dispatch_with_interior_mutability() {
+        use std::rc::Rc;
+        use std::borrow::Borrow;
+        use std::cell::{RefCell, Ref, RefMut};
+        static counter: Rc<RefCell<Counter>> = Rc::new(RefCell::new(Counter { count: 0 }));
+        let mut event: Event<Status, ()> = Event::new();
+        event.on(Status::Active, box(move |_| {
+            let counter: &mut RefMut<Counter> = &mut counter.borrow_mut();
+            counter.count += 1;
+        }));
+        event.dispatch(Status::Active, ());
+        assert_eq!(&mut counter.borrow_mut().count, &mut 1);
     }
     #[test]
     fn sequential_exec_dispatch_with_mut_data() {
