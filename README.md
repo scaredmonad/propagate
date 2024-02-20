@@ -68,4 +68,4 @@ assert_eq!(&mut counter.borrow_mut().count, &mut 1);
 
 ## License
 
-MIT License © Abdullahi M.
+MIT License © Abdi M.
